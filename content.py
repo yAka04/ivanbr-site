@@ -12,11 +12,11 @@ Qualquer mudança no português deve ser repetida no inglês e no chinês.
 # sitemap e links absolutos, e funciona em https://USUARIO.github.io/REPOSITORIO/.
 # Domínios em avaliação (nenhum registrado ainda): ivanpcb.com.br ou ivangroup.com.br
 # Exemplos: "https://ivanpcb.com.br"  ou  "https://yaka04.github.io/ivanbr-site"
-SITE_URL = ""
+SITE_URL = "https://ivanpcb.com"
 
 # Domínio próprio para o GitHub Pages (gera o arquivo docs/CNAME).
 # Só preencha depois que o DNS estiver configurado, senão o site sai do ar.
-CUSTOM_DOMAIN = ""
+CUSTOM_DOMAIN = "ivanpcb.com"
 
 COMPANY = {
     "brand": "IVAN International Trade",
