@@ -11,7 +11,7 @@ from html import escape
 from pathlib import Path
 from urllib.parse import quote
 
-from content import COMPANY, CUSTOM_DOMAIN, LANGS, PRODUCT_IMAGES, SITE_URL, TEXT
+from content import COMPANY, CUSTOM_DOMAIN, LANGS, MAKER_NAMES, PRODUCT_IMAGES, SITE_URL, TEXT
 
 ROOT = Path(__file__).parent
 SRC = ROOT / "src"
@@ -206,19 +206,21 @@ def segments(t):
 </section>"""
 
 
-def products(t, root):
+def products(t, root, lang_code="pt"):
     rows = []
     for i, p in enumerate(t["products"]):
         img, w, h = PRODUCT_IMAGES[p["id"]]
         hl = "".join(f"<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>" for k, v in p["highlights"])
-        specs = "".join(f'<tr><th scope="row">{e(k)}</th><td>{e(v)}</td></tr>' for k, v in p["specs"])
+        spec_rows = [(t["maker_label"], MAKER_NAMES[p["id"]])] + list(p["specs"])
+        specs = "".join(f'<tr><th scope="row">{e(k)}</th><td>{e(v)}</td></tr>' for k, v in spec_rows)
+        alt = f"{t['photo_alt']} {p['name']} ({p['series']})" if lang_code != "zh" else f"{t['photo_alt']}{p['name']}（{p['series']}）"
         quote_text = t["wa_quote"].format(product=f"{p['name']} ({p['series']})")
         models = "".join(f"<li>{e(m)}</li>" for m in p["models"])
         feats = "".join(f"<li>{e(f)}</li>" for f in p["features"])
         loading = "eager" if i == 0 else "lazy"
         rows.append(f"""<article id="{p['id']}" class="product" aria-labelledby="{p['id']}-title">
       <div class="product-media">
-        <img src="{root}assets/img/{img}" width="{w}" height="{h}" alt="{e(p['name'])} {e(p['series'])}" loading="{loading}" decoding="async">
+        <img src="{root}assets/img/{img}" width="{w}" height="{h}" alt="{e(alt)}" loading="{loading}" decoding="async">
       </div>
       <div class="product-body">
         <p class="series">{e(p['series'])}</p>
@@ -266,7 +268,7 @@ def about(t):
   <div class="wrap">
     <div class="about-grid">
       <div class="about-text">
-        <h2 id="about-title">{e(t['about_title'])}</h2>
+        <h2 id="about-title">{'<br>'.join(e(x) for x in t['about_title'].split('|'))}</h2>
         {paras}
       </div>
       <dl class="facts">{facts}</dl>
@@ -452,7 +454,7 @@ def page(lang):
 <main id="main">
 {hero(t)}
 {segments(t)}
-{products(t, root)}
+{products(t, root, lang["code"])}
 {about(t)}
 {customers(t, lang)}
 {contact(t)}
@@ -511,6 +513,15 @@ def main():
         d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(page(lang), encoding="utf-8")
     (OUT / "404.html").write_text(page_404(), encoding="utf-8")
+    # /pt/ leva para a versão em português (que fica na raiz), mantendo a seção (#...).
+    (OUT / "pt").mkdir(exist_ok=True)
+    (OUT / "pt" / "index.html").write_text(
+        '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">'
+        '<title>IVAN International Trade</title><meta name="robots" content="noindex">'
+        '<meta http-equiv="refresh" content="0; url=../">'
+        '<script>location.replace("../" + location.hash);</script>'
+        '</head><body><a href="../">IVAN International Trade</a></body></html>\n',
+        encoding="utf-8")
     if CUSTOM_DOMAIN:
         (OUT / "CNAME").write_text(CUSTOM_DOMAIN + "\n", encoding="utf-8")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")

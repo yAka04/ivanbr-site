@@ -1,4 +1,4 @@
-# ivanbr.com.br
+# Site IVAN International Trade
 
 Site institucional da **IVAN International Trader Group Ltda** (nome fantasia IVAN International Trade), em português, inglês e chinês.
 
@@ -13,7 +13,7 @@ src/assets/         CSS, JS, fontes (Archivo, licença OFL), imagens e ícones
 docs/               site pronto, que é o que o GitHub Pages publica
 ```
 
-Páginas geradas: `/` (português), `/en/` e `/zh/`, além de `404.html`, `sitemap.xml`, `robots.txt` e `CNAME`.
+Páginas geradas: `/` (português), `/en/` e `/zh/`. O endereço `/pt/` leva para a versão em português. Também são gerados `404.html` e `robots.txt`; `sitemap.xml` e `CNAME` só depois que o domínio for definido.
 
 ## Editar
 
@@ -34,7 +34,7 @@ Para ver antes de publicar: `python3 -m http.server -d docs 8000` e abra http://
 
 Só depois que o domínio estiver registrado e o DNS configurado (próxima seção):
 
-1. Em `content.py`, preencha `SITE_URL = "https://seudominio.com.br"` e `CUSTOM_DOMAIN = "seudominio.com.br"`.
+1. Em `content.py`, preencha `SITE_URL` e `CUSTOM_DOMAIN` com o domínio escolhido (em avaliação: ivanpcb.com.br ou ivangroup.com.br). Ex.: `SITE_URL = "https://ivanpcb.com.br"` e `CUSTOM_DOMAIN = "ivanpcb.com.br"`.
 2. Rode `python3 build.py` e faça commit. Isso ativa o canonical, os links hreflang absolutos, o `sitemap.xml` e o arquivo `CNAME`.
 3. Em **Settings → Pages**, confirme o domínio e marque **Enforce HTTPS**.
 

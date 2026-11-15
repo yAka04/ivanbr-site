@@ -10,7 +10,8 @@ Qualquer mudança no português deve ser repetida no inglês e no chinês.
 # Endereço final do site, sem barra no fim. Deixe vazio enquanto o domínio
 # não estiver registrado e apontado. Com ele vazio, o site sai sem canonical,
 # sitemap e links absolutos, e funciona em https://USUARIO.github.io/REPOSITORIO/.
-# Exemplos: "https://ivantrade.com.br"  ou  "https://usuario.github.io/ivanbr-site"
+# Domínios em avaliação (nenhum registrado ainda): ivanpcb.com.br ou ivangroup.com.br
+# Exemplos: "https://ivanpcb.com.br"  ou  "https://yaka04.github.io/ivanbr-site"
 SITE_URL = ""
 
 # Domínio próprio para o GitHub Pages (gera o arquivo docs/CNAME).
@@ -50,21 +51,30 @@ PRODUCT_IMAGES = {
     "max600": ("max600.webp", 801, 717),
 }
 
+# Nome oficial de cada equipamento no material do fabricante (aparece na ficha técnica).
+MAKER_NAMES = {
+    "max-500": "Fully Automatic Drill Bit Regrinding Machine (MAX-500 Series)",
+    "a01": "Drill Bit Cleaning Machine (A01 Series)",
+    "a02": "Change Mark Machine (A02 Series)",
+    "a03": "Clean & Change Mark Machine (A03 Series)",
+    "max600": "Micro-drill Automatic Ring Loading Machine (MAX600)",
+}
+
 # ================================================================ PORTUGUÊS
 PT = {
     "title": "IVAN International Trade | Equipamentos para PCB e PCBA no Brasil",
-    "description": "Operação brasileira do grupo IVAN, com sede em Hong Kong. Máquinas de reafiação, limpeza e remarcação de brocas, aplicação de anéis e equipamentos para fabricação de PCB e montagem de PCBA, com suporte técnico local.",
+    "description": "Empresa brasileira vinculada ao grupo IVAN, sediado em Hong Kong. Máquinas de reafiação, limpeza e remarcação de brocas, aplicação de anéis e equipamentos para fabricação de PCB e montagem de PCBA, com suporte técnico local.",
     "skip": "Pular para o conteúdo",
     "menu": "Menu",
     "lang_label": "Idioma",
     "nav": [("equipment", "Equipamentos"), ("segments", "Segmentos"), ("company", "Empresa"),
-            ("customers", "Clientes"), ("contact", "Contato")],
+            ("customers", "Experiência"), ("contact", "Contato")],
     "wa_short": "WhatsApp",
     "wa_hello": "Olá! Vim pelo site e gostaria de falar sobre equipamentos para PCB/PCBA.",
     "wa_quote": "Olá! Vim pelo site e gostaria de um orçamento: {product}.",
 
     "hero_title": "Equipamentos para a indústria de PCB e PCBA, com suporte técnico local no Brasil.",
-    "hero_lead": "Somos a operação brasileira do grupo IVAN, com sede em Hong Kong. Fornecemos máquinas, equipamentos e materiais para a indústria de fabricação e montagem de placas eletrônicas, conectando a cadeia de suprimentos chinesa ao mercado brasileiro e sul-americano.",
+    "hero_lead": "Somos a empresa brasileira vinculada ao grupo IVAN, sediado em Hong Kong. Fornecemos máquinas, equipamentos e materiais para a indústria de fabricação e montagem de placas eletrônicas, conectando a cadeia de suprimentos chinesa ao mercado brasileiro e sul-americano.",
     "cta_wa": "Falar no WhatsApp",
     "cta_products": "Ver equipamentos",
     "drill_caption": "Nossa linha principal atende cada parte da broca de PCB no ciclo de reafiação.",
@@ -108,6 +118,8 @@ PT = {
     "prod_lead": "Máquinas para limpar, reafiar, remarcar e aplicar anéis em brocas de PCB, em lote e com operação automática.",
     "models_label": "Modelos disponíveis",
     "features_label": "Principais características",
+    "maker_label": "Designação do fabricante",
+    "photo_alt": "Foto:",
     "specs_toggle": "Ficha técnica completa",
     "quote": "Pedir orçamento",
     "products": [
@@ -219,13 +231,13 @@ PT = {
                 "Embalagem e organização automáticas das brocas",
                 "Ocupa pouco espaço e tem interface simples de operar",
             ],
-            "highlights": [("Diâmetro da broca", "Φ0,1–2,3 mm"), ("Capacidade", "≥ 2.200 peças/h"), ("Repetibilidade da profundidade do anel", "±0,02 mm")],
+            "highlights": [("Diâmetro da broca", "Φ0,1–2,3 mm"), ("Capacidade", "≥ 2.200 peças/h"), ("Precisão da profundidade do anel", "±0,02 mm")],
             "specs": [
                 ("Modelo", "MAX600"),
                 ("Diâmetro da broca", "Φ0,1–Φ2,3 mm"),
                 ("Diâmetro da haste", "Φ3,175 mm"),
-                ("Repetibilidade da profundidade do anel", "±0,02 mm"),
-                ("Repetibilidade da detecção do diâmetro externo", "±0,02 mm"),
+                ("Precisão da profundidade de aplicação do anel", "±0,02 mm"),
+                ("Precisão de detecção do diâmetro externo", "±0,02 mm"),
                 ("Capacidade", "UPH ≥ 2.200 peças"),
                 ("Dimensões (C × L × A)", "1600 × 800 × 1500 mm"),
                 ("Peso", "600 kg"),
@@ -234,15 +246,15 @@ PT = {
         },
     ],
 
-    "about_title": "Grupo com sede em Hong Kong, empresa constituída no Brasil",
+    "about_title": "Empresa constituída no Brasil, vinculada a um grupo de Hong Kong",
     "about_text": [
-        "A IVAN INTERNATIONAL TRADER GROUP LTDA é a empresa constituída no Brasil que integra o grupo IVAN, com sede em Hong Kong.",
-        "Com o apoio da cadeia de suprimentos chinesa e dos recursos técnicos do grupo, atuamos no desenvolvimento dos mercados brasileiro e sul-americano, fornecendo máquinas, equipamentos e materiais para a indústria de fabricação e montagem de placas eletrônicas.",
+        "A IVAN INTERNATIONAL TRADER GROUP LTDA é uma empresa constituída no Brasil e investida pela IVAN International Trade Group Limited, sediada em Hong Kong.",
+        "Com o apoio da cadeia de suprimentos chinesa e dos recursos técnicos da IVAN Hong Kong, as duas empresas desenvolvem em conjunto os mercados brasileiro e sul-americano, fornecendo máquinas, equipamentos e materiais para a indústria de fabricação e montagem de placas eletrônicas.",
         "Nosso modelo de atendimento combina fornecimento internacional, conhecimento técnico e suporte local, buscando identificar necessidades produtivas e oferecer soluções adequadas à realidade de cada cliente.",
     ],
     "about_facts": [
         ("Empresa no Brasil", "IVAN INTERNATIONAL TRADER GROUP LTDA, CNPJ 69.272.940/0001-36"),
-        ("Grupo", "IVAN International Trade Group Limited, Hong Kong"),
+        ("Empresa investidora", "IVAN International Trade Group Limited, Hong Kong"),
         ("Empresas parceiras na China", "Shenzhen COSTAR e Shenzhen EYESIGHT"),
         ("Experiência do grupo", "Mais de 20 anos em PCB e PCBA"),
         ("Atendimento", "Brasil e América do Sul, a partir de Valinhos (SP)"),
@@ -253,12 +265,12 @@ PT = {
     "timeline": [
         ("2006–2012", "Investimento em pesquisa e desenvolvimento de máquinas de reafiação de brocas."),
         ("2012", "Lançamento comercial do produto."),
-        ("2012–2026", "Fornecimento para fabricantes de PCB em diferentes mercados, incluindo Ásia, Europa e Américas."),
+        ("2012–2026", "Expansão para fabricantes de PCB em diferentes mercados, incluindo Ásia, Europa e Américas."),
         ("2026", "Início do fornecimento de serviços de linhas horizontais de PTH para deposição química de cobre a clientes sul-americanos."),
     ],
 
-    "cust_title": "Clientes de referência",
-    "cust_lead": "Empresas citadas no material institucional do grupo como compradoras dos equipamentos entre 2012 e 2026. A lista é histórica e não indica relação comercial ativa com cada empresa.",
+    "cust_title": "Experiência internacional",
+    "cust_lead": "Relacionamento com empresas de destaque nos setores de PCB e PCBA em diferentes mercados.",
     "customers": [
         ("Taiwan", [("Tripod Technology", "健鼎"), ("Hannstar Board Technology", "瀚宇博德"), ("Dynamic Electronics", "定颖")]),
         ("Hong Kong", [("Kingboard Group", "建滔"), ("Elec & Eltek", "依利安达"), ("Rongxin", "荣信"),
@@ -272,7 +284,7 @@ PT = {
                                ("Xinxiang Good Team Electronics Technology", "慧联")]),
         ("Outros mercados", [("Kims", "Coreia do Sul"), ("Shirai", "Japão"), ("HP-tech", "Alemanha"),
                              ("TLT", "Lituânia"), ("Circuibras", "América do Sul"),
-                             ("Clientes na América do Norte", "")]),
+                             ("Empresas na América do Norte", "")]),
     ],
     "cust_note_is_country": "Outros mercados",
 
@@ -303,7 +315,7 @@ PT = {
             "Equipamentos para PCBA",
         ],
     },
-    "footer_group": "Empresa constituída no Brasil, integrante do grupo IVAN (Hong Kong).",
+    "footer_group": "Empresa constituída no Brasil, investida pela IVAN International Trade Group Limited (Hong Kong).",
     "footer_rights": "Todos os direitos reservados.",
     "notfound_title": "Página não encontrada",
     "notfound_text": "O endereço que você abriu não existe neste site.",
@@ -313,18 +325,18 @@ PT = {
 # ================================================================ ENGLISH
 EN = {
     "title": "IVAN International Trade | PCB and PCBA equipment in Brazil",
-    "description": "Brazilian operation of the IVAN group, headquartered in Hong Kong. Drill bit regrinding, cleaning, re-marking and ring setting machines, plus equipment for PCB fabrication and PCBA assembly, with local technical support.",
+    "description": "Brazilian company affiliated with the IVAN group, headquartered in Hong Kong. Drill bit regrinding, cleaning, re-marking and ring setting machines, plus equipment for PCB fabrication and PCBA assembly, with local technical support.",
     "skip": "Skip to content",
     "menu": "Menu",
     "lang_label": "Language",
     "nav": [("equipment", "Equipment"), ("segments", "Segments"), ("company", "Company"),
-            ("customers", "Customers"), ("contact", "Contact")],
+            ("customers", "Experience"), ("contact", "Contact")],
     "wa_short": "WhatsApp",
     "wa_hello": "Hello! I found you through your website and would like to talk about PCB/PCBA equipment.",
     "wa_quote": "Hello! I found you through your website and would like a quote for: {product}.",
 
     "hero_title": "Equipment for the PCB and PCBA industry, with local technical support in Brazil.",
-    "hero_lead": "We are the Brazilian operation of the IVAN group, headquartered in Hong Kong. We supply machines, equipment and materials for printed circuit board fabrication and electronics assembly, connecting China's supply chain to the Brazilian and South American markets.",
+    "hero_lead": "We are the Brazilian company affiliated with the IVAN group, headquartered in Hong Kong. We supply machines, equipment and materials for printed circuit board fabrication and electronics assembly, connecting China's supply chain to the Brazilian and South American markets.",
     "cta_wa": "Chat on WhatsApp",
     "cta_products": "See the equipment",
     "drill_caption": "Our main product line covers every part of the PCB drill bit in the regrinding cycle.",
@@ -368,6 +380,8 @@ EN = {
     "prod_lead": "Machines that clean, regrind, re-mark and ring PCB drill bits in batches, automatically.",
     "models_label": "Available models",
     "features_label": "Key features",
+    "maker_label": "Manufacturer's designation",
+    "photo_alt": "Photo:",
     "specs_toggle": "Full specifications",
     "quote": "Request a quote",
     "products": [
@@ -479,13 +493,13 @@ EN = {
                 "Automatic packing and arranging of bits",
                 "Small footprint and a simple operator interface",
             ],
-            "highlights": [("Bit diameter", "Φ0.1–2.3 mm"), ("Capacity", "≥ 2,200 pcs/h"), ("Ring depth repeatability", "±0.02 mm")],
+            "highlights": [("Bit diameter", "Φ0.1–2.3 mm"), ("Capacity", "≥ 2,200 pcs/h"), ("Ring loading depth accuracy", "±0.02 mm")],
             "specs": [
                 ("Model", "MAX600"),
                 ("Bit diameter", "Φ0.1–Φ2.3 mm"),
                 ("Shank diameter", "Φ3.175 mm"),
-                ("Ring depth repeatability", "±0.02 mm"),
-                ("Outer diameter detection repeatability", "±0.02 mm"),
+                ("Ring loading depth accuracy", "±0.02 mm"),
+                ("Outer diameter detection accuracy", "±0.02 mm"),
                 ("Capacity", "UPH ≥ 2,200 pcs"),
                 ("Dimensions (L × W × H)", "1600 × 800 × 1500 mm"),
                 ("Weight", "600 kg"),
@@ -494,15 +508,15 @@ EN = {
         },
     ],
 
-    "about_title": "A Hong Kong group with a company incorporated in Brazil",
+    "about_title": "A Brazilian company backed by a Hong Kong group",
     "about_text": [
-        "IVAN INTERNATIONAL TRADER GROUP LTDA is the company incorporated in Brazil that is part of the IVAN group, headquartered in Hong Kong.",
-        "Backed by China's supply chain and the group's technical resources, we develop the Brazilian and South American markets, supplying machines, equipment and materials for printed circuit board fabrication and electronics assembly.",
+        "IVAN INTERNATIONAL TRADER GROUP LTDA is a company incorporated in Brazil and an investee company of IVAN International Trade Group Limited, headquartered in Hong Kong.",
+        "Supported by China's supply chain and the technical service resources of IVAN Hong Kong, both companies jointly develop the Brazilian and South American markets, supplying machines, equipment and materials for printed circuit board fabrication and electronics assembly.",
         "Our service model combines international supply, technical expertise and local support, identifying each customer's production needs and offering solutions that fit their reality.",
     ],
     "about_facts": [
         ("Company in Brazil", "IVAN INTERNATIONAL TRADER GROUP LTDA, CNPJ 69.272.940/0001-36"),
-        ("Group", "IVAN International Trade Group Limited, Hong Kong"),
+        ("Investor", "IVAN International Trade Group Limited, Hong Kong"),
         ("Partner companies in China", "Shenzhen COSTAR and Shenzhen EYESIGHT"),
         ("Group experience", "More than 20 years in PCB and PCBA"),
         ("Coverage", "Brazil and South America, from Valinhos (São Paulo)"),
@@ -513,12 +527,12 @@ EN = {
     "timeline": [
         ("2006–2012", "Investment in research and development of drill bit regrinding machines."),
         ("2012", "Commercial launch of the product."),
-        ("2012–2026", "Supplied to PCB manufacturers in different markets, including Asia, Europe and the Americas."),
-        ("2026", "Start of horizontal PTH electroless copper deposition line services for South American customers."),
+        ("2012–2026", "Expansion to PCB manufacturers in different markets, including Asia, Europe and the Americas."),
+        ("2026", "Start of horizontal PTH electroless copper (deposition) line services for South American customers."),
     ],
 
-    "cust_title": "Reference customers",
-    "cust_lead": "Companies named in the group's corporate material as buyers of its equipment between 2012 and 2026. The list is historical and does not indicate an active business relationship with each company.",
+    "cust_title": "International Experience",
+    "cust_lead": "Relationships with companies across the PCB and PCBA industries in different markets.",
     "customers": [
         ("Taiwan", [("Tripod Technology", "健鼎"), ("Hannstar Board Technology", "瀚宇博德"), ("Dynamic Electronics", "定颖")]),
         ("Hong Kong", [("Kingboard Group", "建滔"), ("Elec & Eltek", "依利安达"), ("Rongxin", "荣信"),
@@ -532,7 +546,7 @@ EN = {
                             ("Xinxiang Good Team Electronics Technology", "慧联")]),
         ("Other markets", [("Kims", "South Korea"), ("Shirai", "Japan"), ("HP-tech", "Germany"),
                            ("TLT", "Lithuania"), ("Circuibras", "South America"),
-                           ("Customers in North America", "")]),
+                           ("Companies in North America", "")]),
     ],
     "cust_note_is_country": "Other markets",
 
@@ -563,7 +577,7 @@ EN = {
             "PCBA equipment",
         ],
     },
-    "footer_group": "Company incorporated in Brazil, part of the IVAN group (Hong Kong).",
+    "footer_group": "Company incorporated in Brazil, an investee company of IVAN International Trade Group Limited (Hong Kong).",
     "footer_rights": "All rights reserved.",
     "notfound_title": "Page not found",
     "notfound_text": "The address you opened does not exist on this site.",
@@ -573,18 +587,18 @@ EN = {
 # ================================================================ 中文
 ZH = {
     "title": "IVAN International Trade | 巴西 PCB 与 PCBA 设备",
-    "description": "总部位于香港的 IVAN 集团在巴西的运营公司。提供全自动钻针研磨机、钻针清洗机、换标机、上环机及 PCB 制造与 PCBA 组装设备，配备巴西本地技术支持。",
+    "description": "总部位于香港的 IVAN 集团在巴西的投资主体。提供全自动钻针研磨机、钻针清洗机、换标机、上环机及 PCB 制造与 PCBA 组装设备，配备巴西本地技术支持。",
     "skip": "跳到主要内容",
     "menu": "菜单",
     "lang_label": "语言",
     "nav": [("equipment", "设备"), ("segments", "产业赛道"), ("company", "公司简介"),
-            ("customers", "客户"), ("contact", "联系我们")],
+            ("customers", "国际经验"), ("contact", "联系我们")],
     "wa_short": "WhatsApp",
     "wa_hello": "您好！我从官网了解到贵司，想咨询 PCB/PCBA 设备。",
     "wa_quote": "您好！我从官网了解到贵司，想询价：{product}。",
 
     "hero_title": "为 PCB 与 PCBA 产业提供设备，|巴西本地技术支持。",
-    "hero_lead": "我们是总部位于香港的 IVAN 集团在巴西的运营公司，为印制电路板制造与电子组装产业提供机器、设备及材料，连接中国供应链与巴西及南美市场。",
+    "hero_lead": "我们是总部位于香港的 IVAN 集团在巴西的投资主体，为印制电路板制造与电子组装产业提供机器、设备及材料，连接中国供应链与巴西及南美市场。",
     "cta_wa": "WhatsApp 咨询",
     "cta_products": "查看设备",
     "drill_caption": "我们的主营设备覆盖 PCB 钻针重磨流程中的每一个部位。",
@@ -628,6 +642,8 @@ ZH = {
     "prod_lead": "自动完成 PCB 钻针的清洗、研磨、换标与上环，适合批量作业。",
     "models_label": "可选型号",
     "features_label": "主要特点",
+    "maker_label": "英文名称",
+    "photo_alt": "设备照片：",
     "specs_toggle": "完整规格",
     "quote": "询价",
     "products": [
@@ -636,7 +652,7 @@ ZH = {
             "name": "全自动钻针研磨机",
             "series": "MAX-500 系列",
             "models": ["MAX-500AT", "MAX-500BT", "MAX-500DT", "MAX-500ET"],
-            "text": "集自动上料、自动研磨、AOI 自动光学检测于一体，可自动测量、自动研磨并调整加工参数，适配不同规格钻针的批量重磨。",
+            "text": "集自动上料、自动研磨、AOI 自动光学检测于一体，可自动测量、自动研磨并补偿“大小头”“重叠分离”参数，自动调整套环高度，适配不同规格钻针的批量重磨，良率稳定。",
             "features": [
                 "上料、研磨与 AOI 检测一体化",
                 "补偿“大小头”“重叠分离”参数",
@@ -754,15 +770,15 @@ ZH = {
         },
     ],
 
-    "about_title": "集团总部位于香港，公司依法设立于巴西",
+    "about_title": "立足巴西，|依托香港 IVAN 集团",
     "about_text": [
-        "IVAN INTERNATIONAL TRADER GROUP LTDA 是 IVAN 集团（总部位于香港）在巴西依法设立的公司。",
-        "依托中国供应链与集团的技术资源，我们致力于开拓巴西及南美市场，为电子电路板制造与组装产业提供机器、设备及材料。",
+        "IVAN INTERNATIONAL TRADER GROUP LTDA 是在巴西依法设立的公司，为香港 IVAN International Trade Group Limited 在巴西的投资主体。",
+        "依托香港 IVAN 的中国供应链与技术服务资源，双方共同开拓巴西及南美市场，为电子电路板制造与组装产业提供机器、设备及材料。",
         "我们的服务模式融合国际供应、专业技术与本地支持，深入了解客户的生产需求，提供符合实际情况的解决方案。",
     ],
     "about_facts": [
         ("巴西公司", "IVAN INTERNATIONAL TRADER GROUP LTDA，CNPJ 69.272.940/0001-36"),
-        ("集团", "IVAN International Trade Group Limited（香港）"),
+        ("投资方", "IVAN International Trade Group Limited（香港）"),
         ("中国合作企业", "深圳 COSTAR、深圳 EYESIGHT"),
         ("集团行业经验", "深耕 PCB、PCBA 制造二十余年"),
         ("服务区域", "巴西及南美，据点位于圣保罗州 Valinhos"),
@@ -773,19 +789,19 @@ ZH = {
     "timeline": [
         ("2006–2012", "投入研发全自动钻针研磨机。"),
         ("2012", "产品成功投入市场销售应用。"),
-        ("2012–2026", "设备销往亚洲、欧洲及美洲等多个市场的 PCB 制造企业。"),
+        ("2012–2026", "业务拓展至亚洲、欧洲及美洲等多个市场的 PCB 制造企业。"),
         ("2026", "开始为南美客户提供 PTH 水平沉铜线服务。"),
     ],
 
-    "cust_title": "客户代表",
-    "cust_lead": "集团资料中列出的 2012 年至 2026 年设备销售合作客户代表。该名单为历史记录，并不代表与每家企业均有现行合作。",
+    "cust_title": "国际经验",
+    "cust_lead": "与多个市场的 PCB 及 PCBA 领域知名企业建立了业务往来。",
     "customers": [
         ("台资企业", [("健鼎", ""), ("瀚宇博德", ""), ("定颖", "")]),
         ("港资企业", [("建滔集团", ""), ("依利安达", ""), ("荣信", ""), ("扬宣", ""), ("科惠", ""), ("依顿", "")]),
         ("中资企业", [("深南", ""), ("胜宏", ""), ("景旺", ""), ("奥士康", ""), ("金禄", ""), ("骏亚", ""),
                       ("中京", ""), ("科翔", ""), ("威尔高", ""), ("金洲", ""), ("鼎泰", ""), ("厦芝", ""), ("慧联", "")]),
         ("海外市场", [("Kims", "韩国"), ("白井", "日本"), ("HP-tech", "德国"), ("TLT", "立陶宛"),
-                      ("Circuibras", "南美"), ("北美地区客户", "")]),
+                      ("Circuibras", "南美"), ("北美地区企业", "")]),
     ],
     "cust_note_is_country": "海外市场",
 
@@ -816,7 +832,7 @@ ZH = {
             "PCBA 设备",
         ],
     },
-    "footer_group": "在巴西依法设立的公司，为 IVAN 集团（香港）成员企业。",
+    "footer_group": "在巴西依法设立的公司，为香港 IVAN International Trade Group Limited 的投资主体。",
     "footer_rights": "版权所有。",
     "notfound_title": "页面不存在",
     "notfound_text": "您访问的地址不存在。",
