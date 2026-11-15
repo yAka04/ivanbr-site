@@ -637,14 +637,14 @@ def head(t, lang, root):
             f'<link rel="alternate" hreflang="{l["hreflang"]}" href="{SITE_URL}/{l["path"]}">' for l in LANGS
         ) + f'<link rel="alternate" hreflang="x-default" href="{SITE_URL}/">'
         canon = f'<link rel="canonical" href="{page_url}">\n<meta property="og:url" content="{page_url}">'
-        og_img = f"{SITE_URL}/assets/og.jpg"
+        og_img = f"{SITE_URL}/assets/og-{lang['code']}.jpg"
     else:
         # Sem endereço definitivo: links relativos, sem canonical.
         alts = "".join(
             f'<link rel="alternate" hreflang="{l["hreflang"]}" href="{(root + l["path"]) or "./"}">' for l in LANGS
         )
         canon = ""
-        og_img = f"{root}assets/og.jpg"
+        og_img = f"{root}assets/og-{lang['code']}.jpg"
     ld = {
         "@context": "https://schema.org",
         "@type": "Organization",
@@ -755,6 +755,17 @@ def page_404():
 """
 
 
+def write_redirect(folder, target, html_lang):
+    (OUT / folder).mkdir(exist_ok=True)
+    (OUT / folder / "index.html").write_text(
+        f'<!DOCTYPE html><html lang="{html_lang}"><head><meta charset="utf-8">'
+        '<title>IVAN International Trade</title><meta name="robots" content="noindex">'
+        f'<meta http-equiv="refresh" content="0; url={target}">'
+        f'<script>location.replace("{target}" + location.hash);</script>'
+        f'</head><body><a href="{target}">IVAN International Trade</a></body></html>\n',
+        encoding="utf-8")
+
+
 def main():
     if OUT.exists():
         shutil.rmtree(OUT)
@@ -765,14 +776,10 @@ def main():
         (d / "index.html").write_text(page(lang), encoding="utf-8")
     (OUT / "404.html").write_text(page_404(), encoding="utf-8")
     # /pt/ leva para a versão em português (que fica na raiz), mantendo a seção (#...).
-    (OUT / "pt").mkdir(exist_ok=True)
-    (OUT / "pt" / "index.html").write_text(
-        '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">'
-        '<title>IVAN International Trade</title><meta name="robots" content="noindex">'
-        '<meta http-equiv="refresh" content="0; url=../">'
-        '<script>location.replace("../" + location.hash);</script>'
-        '</head><body><a href="../">IVAN International Trade</a></body></html>\n',
-        encoding="utf-8")
+    write_redirect("pt", "../", "pt-BR")
+    # A versão em chinês foi desativada: quem abrir um link antigo de /zh/ vai para a versão em inglês.
+    if not any(l["code"] == "zh" for l in LANGS):
+        write_redirect("zh", "../en/", "en")
     if CUSTOM_DOMAIN:
         (OUT / "CNAME").write_text(CUSTOM_DOMAIN + "\n", encoding="utf-8")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")

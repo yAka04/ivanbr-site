@@ -40,8 +40,10 @@ COMPANY = {
 LANGS = [
     {"code": "pt", "html_lang": "pt-BR", "hreflang": "pt-BR", "label": "PT", "name": "Português", "path": ""},
     {"code": "en", "html_lang": "en", "hreflang": "en", "label": "EN", "name": "English", "path": "en/"},
-    {"code": "zh", "html_lang": "zh-CN", "hreflang": "zh-CN", "label": "中文", "name": "中文", "path": "zh/"},
 ]
+# Versão em chinês desativada em 15/11/2026 a pedido do cliente. Os textos continuam em TEXT["zh"];
+# para reativar, volte a incluir esta linha em LANGS e apague o redirecionamento de /zh/ em build.py:
+# {"code": "zh", "html_lang": "zh-CN", "hreflang": "zh-CN", "label": "中文", "name": "中文", "path": "zh/"},
 
 PRODUCT_IMAGES = {
     "max-500": ("max-500.webp", 954, 849),
