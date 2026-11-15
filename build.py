@@ -201,6 +201,31 @@ def _flutes(x0, x1, yc, h, step=18):
     return out
 
 
+def drill_icon(kind):
+    """Ícone de broca para a faixa de contexto: nova, gasta ou recuperada."""
+    tip = ('<polygon class="m" points="14,30 24,24 24,36"/>' if kind != "worn"
+           else '<polygon class="m" points="20,26 24,24 24,36 20,34"/>')
+    out = ['<svg class="cyc-icon" viewBox="0 0 200 60" aria-hidden="true" focusable="false">',
+           '<line class="ax" x1="4" y1="30" x2="196" y2="30"/>', tip,
+           '<rect class="m" x="24" y="24" width="86" height="12"/>']
+    out += [f'<polygon class="fl" points="{x},24 {x+5},24 {x+13},36 {x+8},36"/>' for x in range(26, 104, 12)]
+    out += ['<polygon class="m" points="110,24 130,18 130,42 110,36"/>',
+            '<rect class="m" x="130" y="18" width="58" height="24"/>']
+    if kind == "worn":
+        out += [f'<circle class="dust" cx="{x}" cy="{y}" r="2"/>' for x, y in [(12, 20), (8, 38), (40, 16), (66, 44), (90, 15)]]
+    if kind == "new":
+        out.append('<rect class="ring" x="146" y="13" width="10" height="34" rx="2"/>')
+        out.append('<rect class="mk-red" x="182" y="18" width="6" height="24"/>')
+    if kind == "worn":
+        out.append('<rect class="ring" x="146" y="13" width="10" height="34" rx="2"/>')
+        out.append('<rect class="mk-red" x="182" y="18" width="6" height="24"/>')
+    if kind == "rec":
+        out.append('<rect class="ring" x="146" y="13" width="10" height="34" rx="2"/>')
+        out.append('<rect class="mk-blue" x="182" y="18" width="6" height="24"/>')
+    out.append("</svg>")
+    return "".join(out)
+
+
 def op_art(i, tol="±0,02"):
     """Ilustrações técnicas das quatro operações (vetoriais, sem texto traduzível)."""
     svg = ['<svg class="op-art" viewBox="0 0 320 200" aria-hidden="true" focusable="false">',
@@ -254,17 +279,8 @@ def op_art(i, tol="±0,02"):
 
 
 def hero(t, root):
-    ops = "".join(
-        f'<li class="op-card"><div class="op-visual">{op_art(i, "±0,02" if t is TEXT["pt"] else "±0.02")}<span class="op-num" aria-hidden="true">{num}</span></div>'
-        f'<div class="op-body"><h3 class="op-title"><span class="op-machine">{e(machine)}</span> <span class="op-name">{e(name)}</span></h3>'
-        f'<p class="op-desc">{e(desc)}</p><p class="op-links">'
-        + "".join(f'<a href="#{pid}">{e(label)}</a>' for label, pid in links)
-        + '</p></div></li>'
-        for i, (num, machine, name, desc, links) in enumerate(t["ops"])
-    )
     route = "".join(f'<li><span class="route-via" aria-hidden="true"></span>{e(c)}</li>' for c in t["route"])
-    p0 = t["products"][0]
-    img, w, h = PRODUCT_IMAGES[p0["id"]]
+    links = "".join(f'<li><a href="{e(h)}"><strong>{e(c)}</strong><span>{e(x)}</span></a></li>' for h, c, x in t["hero_links"])
     return f"""<section class="hero" aria-labelledby="hero-title">
   <div class="wrap hero-grid">
     <div class="hero-copy">
@@ -273,27 +289,16 @@ def hero(t, root):
       <p class="lead">{e(t['hero_lead'])}</p>
       <div class="ctas">
         <a class="btn btn-gold" href="{e(wa_link(t['wa_hello']))}" target="_blank" rel="noopener">{CHAT_ICON}<span>{e(t['cta_wa'])}</span></a>
-        <a class="btn btn-ghost" href="#equipment">{e(t['cta_products'])}</a>
+        <a class="btn btn-ghost" href="#segments">{e(t['cta_portfolio'])}</a>
       </div>
     </div>
     <figure class="hero-visual">
-      <div class="hero-photo"><img src="{root}assets/img/{img}" width="{w}" height="{h}" alt="{e(t['photo_alt'])} {e(p0['name'])} ({e(p0['series'])})" fetchpriority="high"></div>
+      <div class="hero-board">{board_svg("pcba")}</div>
       <figcaption>
         <span class="hc-label">{e(t['hero_card_label'])}</span>
-        <strong>{e(p0['name'])}</strong>
-        <span class="hc-series">{e(p0['series'])}</span>
-        <a href="#max-500">{e(t['hero_card_link'])}</a>
+        <ul class="hc-list">{links}</ul>
       </figcaption>
     </figure>
-  </div>
-  <div class="wrap">
-    <div class="ops">
-      <div class="ops-head">
-        <h2 id="ops-title">{e(t['ops_title'])}</h2>
-        <p>{e(t['ops_lead'])}</p>
-      </div>
-      <ul class="ops-grid" aria-labelledby="ops-title">{ops}</ul>
-    </div>
   </div>
 </section>"""
 
@@ -332,33 +337,101 @@ def board_svg(kind):
     return "".join(out)
 
 
-def segments(t):
-    pcb = "".join(f"<li>{e(i)}</li>" for i in t["seg_pcb_items"])
-    pcba = "".join(f"<li>{e(i)}</li>" for i in t["seg_pcba_items"])
+ICONS = {
+    # ícones de linha 24x24, desenhados para o site
+    "process": '<path d="M7 3v6l-4 9a2 2 0 0 0 2 3h6"/><path d="M5 3h4"/><path d="M14 13h7v8h-7z"/><path d="M14 17h7"/><circle cx="17.5" cy="7" r="3"/>',
+    "drill": '<path d="M9 3h6v5H9z"/><path d="M10 8h4l-1 9-1 4-1-4z"/><path d="M10.5 11l3 1M10.6 14l2.6 1"/>',
+    "regrind": '<circle cx="8" cy="8" r="5"/><circle cx="8" cy="8" r="1.5"/><path d="M12 14l9 3-9 3z"/><path d="M4 2.5l1.5 1.5"/>',
+    "pth": '<rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M3 15h18"/><path d="M10 4v16M14 4v16"/>',
+    "print": '<path d="M4 15h16v5H4z"/><path d="M7 15V4h10v11"/><path d="M9 8h6M9 11h4"/>',
+    "oven": '<rect x="2" y="7" width="20" height="10" rx="1"/><path d="M6 12h12"/><path d="M7 4c1 1 1 2 0 3M12 4c1 1 1 2 0 3M17 4c1 1 1 2 0 3"/>',
+    "aoi": '<rect x="7" y="2" width="10" height="7" rx="1"/><path d="M12 9v2"/><path d="M8 21l4-10 4 10"/><path d="M3 21h18"/>',
+    "eye": '<path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    "lab": '<path d="M9 3h6"/><path d="M10 3v6l-5 10a1.5 1.5 0 0 0 1.4 2h11.2a1.5 1.5 0 0 0 1.4-2L14 9V3"/><path d="M7 15h10"/>',
+    "fixture": '<path d="M4 20V10h4v10M16 20V10h4v10"/><path d="M8 14h8"/><path d="M6 10V5M18 10V5"/><path d="M2 20h20"/>',
+    "material": '<path d="M12 2l9 5-9 5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/>',
+    "line": '<rect x="2" y="13" width="20" height="4" rx="1"/><circle cx="6" cy="19.5" r="1.5"/><circle cx="18" cy="19.5" r="1.5"/><rect x="6" y="6" width="5" height="7"/><rect x="13" y="8" width="5" height="5"/>',
+    "shield": '<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+}
+
+
+def icon(name):
+    return (f'<svg class="pf-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" '
+            f'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">{ICONS[name]}</svg>')
+
+
+def recovery(t):
+    ops = "".join(
+        f'<li class="op-card"><div class="op-visual">{op_art(i, "±0,02" if t is TEXT["pt"] else "±0.02")}<span class="op-num" aria-hidden="true">{num}</span></div>'
+        f'<div class="op-body"><h3 class="op-title"><span class="op-machine">{e(head)}</span> <span class="op-name">{e(machine)}</span></h3>'
+        f'<p class="op-desc">{e(desc)}</p><p class="op-links">'
+        + "".join(f'<a href="#{pid}">{e(label)}</a>' for label, pid in links)
+        + '</p></div></li>'
+        for i, (num, head, machine, desc, links) in enumerate(t["ops"])
+    )
+    cycle = "".join(
+        f'<li>{drill_icon(kind)}<p class="cyc-title">{e(title)}</p><p class="cyc-text">{e(text)}</p></li>'
+        for kind, (title, text) in zip(["new", "worn", "rec"], t["ops_cycle"])
+    )
+    return f"""<section id="recovery" class="section recovery" aria-labelledby="ops-title">
+  <div class="wrap">
+    <div class="ops">
+      <div class="ops-head">
+        <p class="ops-kicker">{e(t['ops_kicker'])}</p>
+        <h2 id="ops-title">{e(t['ops_title'])}</h2>
+        <p>{e(t['ops_lead'])}</p>
+      </div>
+      <ol class="cycle" aria-label="{e(t['ops_cycle_label'])}">{cycle}</ol>
+      <ul class="ops-grid" aria-labelledby="ops-title">{ops}</ul>
+    </div>
+  </div>
+</section>"""
+
+
+def segments(t, root):
+    def items(lst):
+        out = []
+        lst = [x for x in lst if x[2]] + [x for x in lst if not x[2]]
+        for ic, name, desc in lst:
+            link = ('<a class="pf-link" href="#equipment">' + e(t["cta_products"]) + '</a>') if ic == "regrind" else (
+                f'<a class="pf-link" href="{e(wa_link(t["wa_item"].format(item=name)))}" target="_blank" rel="noopener">{e(t["seg_consult"])}</a>')
+            if ic == "regrind":
+                thumbs = "".join(
+                    f'<a href="#{e(p["id"])}" aria-label="{e(p["name"])} ({e(p["series"])})"><img src="{root}assets/img/{PRODUCT_IMAGES[p["id"]][0]}" alt="" loading="lazy" width="96" height="72"></a>'
+                    for p in t["products"])
+                desc_extra = f'<div class="pf-thumbs">{thumbs}</div>'
+            else:
+                desc_extra = ""
+            out.append(f'<li class="pf-item' + (' pf-item--feat' if desc else '') + f'">{icon(ic)}<h4>{e(name)}</h4>' + (f'<p>{e(desc)}</p>' if desc else '') + desc_extra + f'{link}</li>')
+        return "".join(out)
     return f"""<section id="segments" class="section segments" aria-labelledby="seg-title">
   <div class="wrap">
     <div class="section-head">
       <h2 id="seg-title">{e(t['seg_title'])}</h2>
       <p>{e(t['seg_lead'])}</p>
     </div>
-    <div class="seg-grid">
-      <article class="seg seg-pcb" aria-labelledby="seg-pcb-title">
-        <div class="seg-art">{board_svg("pcb")}<p class="seg-code" aria-hidden="true">{e(t['seg_pcb_code'])}</p></div>
-        <div class="seg-body">
+    <article id="portfolio-pcb" class="pf-block pf-pcb" aria-labelledby="seg-pcb-title">
+      <header class="pf-head">
+        <div>
+          <p class="seg-code" aria-hidden="true">{e(t['seg_pcb_code'])}</p>
           <h3 id="seg-pcb-title">{e(t['seg_pcb_title'])} <span class="sr-only">({e(t['seg_pcb_code'])})</span></h3>
           <p>{e(t['seg_pcb_text'])}</p>
-          <ul class="ticks two-col">{pcb}</ul>
         </div>
-      </article>
-      <article class="seg seg-pcba" aria-labelledby="seg-pcba-title">
-        <div class="seg-art">{board_svg("pcba")}<p class="seg-code" aria-hidden="true">{e(t['seg_pcba_code'])}</p></div>
-        <div class="seg-body">
+        <div class="pf-art">{board_svg("pcb")}</div>
+      </header>
+      <ul class="pf-grid">{items(t['seg_pcb_items'])}</ul>
+    </article>
+    <article id="portfolio-pcba" class="pf-block pf-pcba" aria-labelledby="seg-pcba-title">
+      <header class="pf-head">
+        <div>
+          <p class="seg-code" aria-hidden="true">{e(t['seg_pcba_code'])}</p>
           <h3 id="seg-pcba-title">{e(t['seg_pcba_title'])} <span class="sr-only">({e(t['seg_pcba_code'])})</span></h3>
           <p>{e(t['seg_pcba_text'])}</p>
-          <ul class="ticks">{pcba}</ul>
         </div>
-      </article>
-    </div>
+        <div class="pf-art">{board_svg("pcba")}</div>
+      </header>
+      <ul class="pf-grid">{items(t['seg_pcba_items'])}</ul>
+    </article>
   </div>
 </section>"""
 
@@ -630,7 +703,8 @@ def page(lang):
 {header(t, lang, root)}
 <main id="main">
 {hero(t, root)}
-{segments(t)}
+{segments(t, root)}
+{recovery(t)}
 {products(t, root, lang["code"])}
 {about(t)}
 {customers(t, lang)}
