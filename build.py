@@ -155,21 +155,40 @@ def lang_switch(t, lang, root):
     return f'<ul class="langs" aria-label="{e(t["lang_label"])}">{"".join(items)}</ul>'
 
 
-def hero(t):
+def series_code(pid):
+    return {"max-500": "MAX-500", "a01": "A01", "a02": "A02", "a03": "A03", "max600": "MAX600"}[pid]
+
+
+def hero(t, root):
     callouts = "".join(
         f'<li><strong>{e(part)}</strong><span>{e(desc)}</span><a href="#{pid}">{e(model)}</a></li>'
         for part, desc, model, pid in t["callouts"]
     )
+    route = "".join(f'<li><span class="route-via" aria-hidden="true"></span>{e(c)}</li>' for c in t["route"])
+    p0 = t["products"][0]
+    img, w, h = PRODUCT_IMAGES[p0["id"]]
     return f"""<section class="hero" aria-labelledby="hero-title">
-  <div class="wrap">
-    <h1 id="hero-title">{'<br>'.join(e(x) for x in t['hero_title'].split('|'))}</h1>
-    <div class="hero-row">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <ol class="route" aria-label="{e(t['route_label'])}">{route}</ol>
+      <h1 id="hero-title">{'<br>'.join(e(x) for x in t['hero_title'].split('|'))}</h1>
       <p class="lead">{e(t['hero_lead'])}</p>
       <div class="ctas">
         <a class="btn btn-gold" href="{e(wa_link(t['wa_hello']))}" target="_blank" rel="noopener">{CHAT_ICON}<span>{e(t['cta_wa'])}</span></a>
         <a class="btn btn-ghost" href="#equipment">{e(t['cta_products'])}</a>
       </div>
     </div>
+    <figure class="hero-visual">
+      <div class="hero-photo"><img src="{root}assets/img/{img}" width="{w}" height="{h}" alt="{e(t['photo_alt'])} {e(p0['name'])} ({e(p0['series'])})" fetchpriority="high"></div>
+      <figcaption>
+        <span class="hc-label">{e(t['hero_card_label'])}</span>
+        <strong>{e(p0['name'])}</strong>
+        <span class="hc-series">{e(p0['series'])}</span>
+        <a href="#max-500">{e(t['hero_card_link'])}</a>
+      </figcaption>
+    </figure>
+  </div>
+  <div class="wrap">
     <figure class="drill">
       <figcaption>{e(t['drill_caption'])}</figcaption>
       {drill_svg(t)}
@@ -177,6 +196,40 @@ def hero(t):
     </figure>
   </div>
 </section>"""
+
+def board_svg(kind):
+    """Ilustrações originais: placa nua (PCB) e placa montada (PCBA)."""
+    traces = [
+        "M40 60 H120 L140 80 H220", "M40 100 H90 L110 120 H200 L220 140 H300",
+        "M60 170 H150 L170 150 H250", "M240 60 V40 H320", "M300 90 V160 L280 180 H200",
+        "M120 190 H300",
+    ]
+    vias = [(40, 60), (220, 80), (40, 100), (300, 140), (60, 170), (250, 150), (320, 40),
+            (300, 90), (200, 180), (120, 190), (300, 190)]
+    holes = [(30, 30), (330, 30), (30, 200), (330, 200)]
+    out = ['<svg class="board" viewBox="0 0 360 230" aria-hidden="true" focusable="false">',
+           '<rect x="4" y="4" width="352" height="222" rx="12" class="b-sub"/>',
+           '<rect x="14" y="14" width="332" height="202" rx="8" class="b-silk"/>']
+    out += [f'<path d="{d}" class="b-trace"/>' for d in traces]
+    out += [f'<circle cx="{x}" cy="{y}" r="6" class="b-via"/>' for x, y in vias]
+    out += [f'<circle cx="{x}" cy="{y}" r="7" class="b-hole"/>' for x, y in holes]
+    if kind == "pcba":
+        out += ['<rect x="128" y="58" width="78" height="78" rx="4" class="c-ic"/>',
+                '<rect x="140" y="70" width="54" height="54" rx="2" class="c-ic-top"/>']
+        for i in range(7):
+            o = 136 + i * 10
+            out += [f'<rect x="{o}" y="50" width="4" height="8" class="c-pin"/>',
+                    f'<rect x="{o}" y="136" width="4" height="8" class="c-pin"/>',
+                    f'<rect x="120" y="{o-70}" width="8" height="4" class="c-pin"/>',
+                    f'<rect x="206" y="{o-70}" width="8" height="4" class="c-pin"/>']
+        out += ['<rect x="236" y="96" width="34" height="14" rx="2" class="c-res"/>',
+                '<rect x="236" y="120" width="34" height="14" rx="2" class="c-res"/>',
+                '<circle cx="80" cy="140" r="16" class="c-cap"/><circle cx="80" cy="140" r="8" class="c-cap-top"/>',
+                '<rect x="232" y="164" width="96" height="34" rx="3" class="c-conn"/>']
+        out += [f'<rect x="{240 + i*14}" y="172" width="8" height="18" rx="1" class="c-conn-pin"/>' for i in range(6)]
+        out += ['<rect x="44" y="40" width="44" height="24" rx="3" class="c-ic"/>']
+    out.append("</svg>")
+    return "".join(out)
 
 
 def segments(t):
@@ -190,26 +243,30 @@ def segments(t):
     </div>
     <div class="seg-grid">
       <article class="seg seg-pcb" aria-labelledby="seg-pcb-title">
-        <p class="seg-code" aria-hidden="true">{e(t['seg_pcb_code'])}</p>
-        <h3 id="seg-pcb-title">{e(t['seg_pcb_title'])} <span class="sr-only">({e(t['seg_pcb_code'])})</span></h3>
-        <p>{e(t['seg_pcb_text'])}</p>
-        <ul class="ticks two-col">{pcb}</ul>
+        <div class="seg-art">{board_svg("pcb")}<p class="seg-code" aria-hidden="true">{e(t['seg_pcb_code'])}</p></div>
+        <div class="seg-body">
+          <h3 id="seg-pcb-title">{e(t['seg_pcb_title'])} <span class="sr-only">({e(t['seg_pcb_code'])})</span></h3>
+          <p>{e(t['seg_pcb_text'])}</p>
+          <ul class="ticks two-col">{pcb}</ul>
+        </div>
       </article>
       <article class="seg seg-pcba" aria-labelledby="seg-pcba-title">
-        <p class="seg-code" aria-hidden="true">{e(t['seg_pcba_code'])}</p>
-        <h3 id="seg-pcba-title">{e(t['seg_pcba_title'])} <span class="sr-only">({e(t['seg_pcba_code'])})</span></h3>
-        <p>{e(t['seg_pcba_text'])}</p>
-        <ul class="ticks">{pcba}</ul>
+        <div class="seg-art">{board_svg("pcba")}<p class="seg-code" aria-hidden="true">{e(t['seg_pcba_code'])}</p></div>
+        <div class="seg-body">
+          <h3 id="seg-pcba-title">{e(t['seg_pcba_title'])} <span class="sr-only">({e(t['seg_pcba_code'])})</span></h3>
+          <p>{e(t['seg_pcba_text'])}</p>
+          <ul class="ticks">{pcba}</ul>
+        </div>
       </article>
     </div>
   </div>
 </section>"""
 
-
 def products(t, root, lang_code="pt"):
-    rows = []
+    rows, index = [], []
     for i, p in enumerate(t["products"]):
         img, w, h = PRODUCT_IMAGES[p["id"]]
+        code = series_code(p["id"])
         hl = "".join(f"<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>" for k, v in p["highlights"])
         spec_rows = [(t["maker_label"], MAKER_NAMES[p["id"]])] + list(p["specs"])
         specs = "".join(f'<tr><th scope="row">{e(k)}</th><td>{e(v)}</td></tr>' for k, v in spec_rows)
@@ -217,10 +274,14 @@ def products(t, root, lang_code="pt"):
         quote_text = t["wa_quote"].format(product=f"{p['name']} ({p['series']})")
         models = "".join(f"<li>{e(m)}</li>" for m in p["models"])
         feats = "".join(f"<li>{e(f)}</li>" for f in p["features"])
-        loading = "eager" if i == 0 else "lazy"
-        rows.append(f"""<article id="{p['id']}" class="product" aria-labelledby="{p['id']}-title">
-      <div class="product-media">
-        <img src="{root}assets/img/{img}" width="{w}" height="{h}" alt="{e(alt)}" loading="{loading}" decoding="async">
+        flip = " product--flip" if i % 2 else ""
+        index.append(
+            f'<li><a href="#{p["id"]}"><span class="ci-img"><img src="{root}assets/img/{img}" width="{w}" height="{h}" alt="" loading="lazy" decoding="async"></span>'
+            f'<span class="ci-code">{e(code)}</span><span class="ci-name">{e(p["name"])}</span></a></li>')
+        rows.append(f"""<article id="{p['id']}" class="product{flip}" aria-labelledby="{p['id']}-title">
+      <div class="product-visual">
+        <span class="pv-code" aria-hidden="true">{e(code)}</span>
+        <img src="{root}assets/img/{img}" width="{w}" height="{h}" alt="{e(alt)}" loading="lazy" decoding="async">
       </div>
       <div class="product-body">
         <p class="series">{e(p['series'])}</p>
@@ -252,26 +313,36 @@ def products(t, root, lang_code="pt"):
       <h2 id="prod-title">{e(t['prod_title'])}</h2>
       <p>{e(t['prod_lead'])}</p>
     </div>
+    <nav class="catalog-index" aria-label="{e(t['catalog_label'])}"><ul>{''.join(index)}</ul></nav>
     {''.join(rows)}
   </div>
 </section>"""
 
-
 def about(t):
     paras = "".join(f"<p>{e(p)}</p>" for p in t["about_text"])
     facts = "".join(f"<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>" for k, v in t["about_facts"])
+    nodes = "".join(
+        f'<li><span class="net-via" aria-hidden="true"></span><p class="net-city">{e(city)}</p>'
+        f'<p class="net-entity">{e(entity)}</p><p class="net-role">{e(role)}</p></li>'
+        for city, entity, role in t["net_nodes"]
+    )
     tl = "".join(
         f'<li><span class="via-dot" aria-hidden="true"></span><p class="year">{e(y)}</p><p class="tl-text">{e(txt)}</p></li>'
         for y, txt in t["timeline"]
     )
+    title = "<br>".join(e(x) for x in t["about_title"].split("|"))
     return f"""<section id="company" class="section about" aria-labelledby="about-title">
   <div class="wrap">
     <div class="about-grid">
       <div class="about-text">
-        <h2 id="about-title">{'<br>'.join(e(x) for x in t['about_title'].split('|'))}</h2>
+        <h2 id="about-title">{title}</h2>
         {paras}
       </div>
       <dl class="facts">{facts}</dl>
+    </div>
+    <div class="net" role="group" aria-labelledby="net-title">
+      <h3 id="net-title" class="net-title">{e(t['net_title'])}</h3>
+      <ol class="net-nodes">{nodes}</ol>
     </div>
   </div>
 </section>
@@ -285,7 +356,6 @@ def about(t):
   </div>
 </section>"""
 
-
 def customers(t, lang):
     groups = []
     for region, names in t["customers"]:
@@ -298,17 +368,20 @@ def customers(t, lang):
                 items.append(f'<li>{e(name)} <span class="cn">{e(extra)}</span></li>')
             else:
                 items.append(f"<li>{e(name)}</li>")
-        groups.append(f'<div class="cust-group"><h3>{e(region)}</h3><ul>{"".join(items)}</ul></div>')
+        count = t["exp_count"].format(n=len(names))
+        groups.append(
+            f'<div class="exp-card"><div class="exp-head"><h3>{e(region)}</h3>'
+            f'<span class="exp-count">{e(count)}</span></div>'
+            f'<ul class="exp-names">{"".join(items)}</ul></div>')
     return f"""<section id="customers" class="section customers" aria-labelledby="cust-title">
   <div class="wrap">
     <div class="section-head">
       <h2 id="cust-title">{e(t['cust_title'])}</h2>
       <p>{e(t['cust_lead'])}</p>
     </div>
-    <div class="cust-grid">{''.join(groups)}</div>
+    <div class="exp-grid">{''.join(groups)}</div>
   </div>
 </section>"""
-
 
 def contact(t):
     f = t["form"]
@@ -317,16 +390,20 @@ def contact(t):
     return f"""<section id="contact" class="section contact" aria-labelledby="contact-title">
   <div class="wrap contact-grid">
     <div class="contact-info">
-      <h2 id="contact-title">{e(t['contact_title'])}</h2>
+      <h2 id="contact-title">{e(t['cta_title'])}</h2>
       <p class="lead">{e(t['contact_lead'])}</p>
+      <div class="contact-ctas">
+        <a class="btn btn-gold btn-large" href="{e(wa_link(t['wa_hello']))}" target="_blank" rel="noopener">{CHAT_ICON}<span>{e(t['cta_wa'])}</span></a>
+        <span class="contact-or">{e(t['cta_phone'])} <a href="tel:{c['phone_tel']}">{e(c['phone_display'])}</a></span>
+      </div>
       <dl class="contact-list">
-        <div><dt>{e(t['phone_label'])}</dt><dd><a href="tel:{c['phone_tel']}">{e(c['phone_display'])}</a></dd></div>
         <div><dt>{e(t['address_label'])}</dt><dd><address>{address_html(t)}</address>
           <a class="map-link" href="{e(c['maps'])}" target="_blank" rel="noopener">{e(t['map_link'])}</a></dd></div>
       </dl>
     </div>
-    <form class="wa-form" id="wa-form" action="https://wa.me/{c['whatsapp']}" method="get" target="_blank"
+    <form class="wa-form" id="wa-form" aria-labelledby="form-title" action="https://wa.me/{c['whatsapp']}" method="get" target="_blank"
           data-number="{c['whatsapp']}" data-tpl="{e(f['tpl'])}" data-tpl-company="{e(f['tpl_company'])}">
+      <h3 id="form-title" class="form-title">{e(t['contact_title'])}</h3>
       <div class="field">
         <label for="f-name">{e(f['name'])}</label>
         <input id="f-name" name="name" type="text" autocomplete="name" required>
@@ -452,7 +529,7 @@ def page(lang):
 <a class="skip" href="#main">{e(t['skip'])}</a>
 {header(t, lang, root)}
 <main id="main">
-{hero(t)}
+{hero(t, root)}
 {segments(t)}
 {products(t, root, lang["code"])}
 {about(t)}
