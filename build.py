@@ -42,49 +42,80 @@ VIA_MARK = (
 
 
 def drill_svg(t):
-    """Desenho técnico da broca. Partes alinhadas com as 4 colunas das legendas (150/450/750/1050)."""
+    """Ilustração técnica da microbroca: 4 regiões numeradas, linhas indicadoras
+    ortogonais e dois detalhes ampliados (ponta e face da haste).
+    Os números são referências de leitura, não uma sequência de processo."""
+    Y = 196  # eixo da broca
     stripes = []
     x = 118
     while x < 560:
-        stripes.append(f'<polygon points="{x},82 {x+11},82 {x+27},110 {x+16},110"/>')
+        stripes.append(f'<polygon points="{x},{Y-14} {x+11},{Y-14} {x+27},{Y+14} {x+16},{Y+14}"/>')
         x += 24
-    leaders = [
-        ((112, 96), (150, 206)),
-        ((430, 96), (450, 206)),
-        ((730, 96), (750, 206)),
-        ((1068, 96), (1050, 206)),
-    ]
-    leader_svg = "".join(
-        f'<line x1="{a[0]}" y1="{a[1]}" x2="{b[0]}" y2="{b[1]}"/>' for a, b in leaders
+    # regiões (início, fim) e coluna da legenda
+    regions = [(100, 122, 150), (122, 560, 450), (700, 760, 750), (1048, 1100, 1050)]
+    nums = [op[0] for op in t["ops"]]
+    marks = []
+    for (a, b, col), n in zip(regions, nums):
+        mid = (a + b) // 2
+        side = 1 if col >= mid else -1
+        marks.append(
+            f'<path class="bracket" d="M{a},{Y+44} V{Y+50} H{b} V{Y+44}"/>'
+            f'<path class="leader" d="M{mid},{Y+50} V{Y+60}"/>'
+            f'<circle class="tag" cx="{mid}" cy="{Y+72}" r="12"/>'
+            f'<text class="tag-num" x="{mid}" y="{Y+76}" text-anchor="middle">{n}</text>'
+            f'<path class="leader" d="M{mid + side*12},{Y+72} H{col} V{Y+128}"/>'
+        )
+    # detalhe 01: ponta ampliada
+    tip_stripes = "".join(
+        f'<polygon points="{150+i*30},48 {164+i*30},48 {190+i*30},96 {176+i*30},96"/>' for i in range(4)
     )
-    dots = "".join(f'<circle cx="{a[0]}" cy="{a[1]}" r="3.5"/>' for a, _ in leaders)
-    return f"""<svg class="drill-svg" viewBox="0 0 1200 210" role="img" aria-labelledby="drill-title">
+    detail = t["ops_detail"]
+    return f"""<svg class="drill-svg" viewBox="0 0 1200 330" role="img" aria-labelledby="drill-title">
   <title id="drill-title">{e(t['drill_alt'])}</title>
   <defs>
-    <clipPath id="body-clip"><rect x="118" y="82" width="442" height="28"/></clipPath>
+    <clipPath id="body-clip"><rect x="118" y="{Y-14}" width="442" height="28"/></clipPath>
+    <clipPath id="tip-clip"><circle cx="165" cy="72" r="55"/></clipPath>
     <marker id="arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 1 L10 5 L0 9 z" fill="currentColor"/>
     </marker>
   </defs>
-  <line class="axis" x1="70" y1="96" x2="1180" y2="96"/>
+  <g class="insets">
+    <text class="inset-label" x="165" y="10" text-anchor="middle">{e(detail)} {nums[0]}</text>
+    <circle class="inset-bg" cx="165" cy="72" r="56"/>
+    <g clip-path="url(#tip-clip)">
+      <g class="metal"><polygon points="114,72 150,48 150,96"/><rect x="150" y="48" width="120" height="48"/></g>
+      <g class="flutes">{tip_stripes}</g>
+      <line class="axis" x1="100" y1="72" x2="230" y2="72"/>
+    </g>
+    <circle class="inset-ring" cx="165" cy="72" r="56"/>
+    <circle class="inset-src" cx="111" cy="{Y}" r="18"/>
+    <line class="inset-link" x1="118" y1="{Y-17}" x2="143" y2="123"/>
+
+    <text class="inset-label" x="1040" y="10" text-anchor="middle">{e(detail)} {nums[3]}</text>
+    <circle class="inset-bg" cx="1040" cy="72" r="56"/>
+    <circle class="face-rim" cx="1040" cy="72" r="38"/>
+    <circle class="mark" cx="1040" cy="72" r="32"/>
+    <circle class="inset-ring" cx="1040" cy="72" r="56"/>
+    <circle class="inset-src" cx="1074" cy="{Y}" r="22"/>
+    <line class="inset-link" x1="1068" y1="{Y-21}" x2="1055" y2="126"/>
+  </g>
+  <line class="axis" x1="70" y1="{Y}" x2="1180" y2="{Y}"/>
   <g class="metal">
-    <polygon points="100,96 122,82 122,110"/>
-    <rect x="122" y="82" width="438" height="28"/>
-    <polygon points="560,82 640,64 640,128 560,110"/>
-    <rect x="640" y="64" width="410" height="64"/>
+    <polygon points="100,{Y} 122,{Y-14} 122,{Y+14}"/>
+    <rect x="122" y="{Y-14}" width="438" height="28"/>
+    <polygon points="560,{Y-14} 640,{Y-32} 640,{Y+32} 560,{Y+14}"/>
+    <rect x="640" y="{Y-32}" width="410" height="64"/>
   </g>
   <g class="flutes" clip-path="url(#body-clip)">{''.join(stripes)}</g>
-  <g class="mark"><rect x="1048" y="64" width="42" height="64"/><polygon points="1090,64 1100,72 1100,120 1090,128"/></g>
-  <rect class="ring" x="700" y="54" width="60" height="84" rx="5"/>
+  <g class="mark"><rect x="1048" y="{Y-32}" width="42" height="64"/><polygon points="1090,{Y-32} 1100,{Y-24} 1100,{Y+24} 1090,{Y+32}"/></g>
+  <rect class="ring" x="700" y="{Y-42}" width="60" height="84" rx="5"/>
   <g class="dim">
-    <line x1="1104" y1="64" x2="1160" y2="64"/><line x1="1104" y1="128" x2="1160" y2="128"/>
-    <line class="dim-line" x1="1148" y1="66" x2="1148" y2="126" marker-start="url(#arr)" marker-end="url(#arr)"/>
-    <text x="1148" y="48" text-anchor="middle">{e(t['drill_dim'])}</text>
+    <line x1="1104" y1="{Y-32}" x2="1160" y2="{Y-32}"/><line x1="1104" y1="{Y+32}" x2="1160" y2="{Y+32}"/>
+    <line class="dim-line" x1="1148" y1="{Y-30}" x2="1148" y2="{Y+30}" marker-start="url(#arr)" marker-end="url(#arr)"/>
+    <text x="1148" y="{Y-48}" text-anchor="middle">{e(t['drill_dim'])}</text>
   </g>
-  <g class="leaders">{leader_svg}</g>
-  <g class="dots">{dots}</g>
+  <g class="callout-marks">{''.join(marks)}</g>
 </svg>"""
-
 
 def header(t, lang, root, anchor_base=""):
     nav = "".join(f'<li><a href="{anchor_base}#{a}">{e(label)}</a></li>' for a, label in t["nav"])
@@ -159,10 +190,77 @@ def series_code(pid):
     return {"max-500": "MAX-500", "a01": "A01", "a02": "A02", "a03": "A03", "max600": "MAX600"}[pid]
 
 
+def _flutes(x0, x1, yc, h, step=18):
+    """Corpo da broca com canais helicoidais, de x0 a x1, centrado em yc."""
+    t, b = yc - h / 2, yc + h / 2
+    out = [f'<rect class="m" x="{x0}" y="{t}" width="{x1-x0}" height="{h}"/>']
+    x = x0 - h
+    while x < x1:
+        out.append(f'<polygon class="fl" points="{x},{t} {x+8},{t} {x+8+h*0.7},{b} {x+h*0.7},{b}"/>')
+        x += step
+    return out
+
+
+def op_art(i, tol="±0,02"):
+    """Ilustrações técnicas das quatro operações (vetoriais, sem texto traduzível)."""
+    svg = ['<svg class="op-art" viewBox="0 0 320 200" aria-hidden="true" focusable="false">',
+           f'<defs><clipPath id="fc{i}"><rect x="0" y="0" width="320" height="200"/></clipPath></defs>']
+    if i == 0:  # MAX-500: ponta no rebolo + câmera AOI
+        svg += [f'<g clip-path="url(#fc{i})">',
+                '<line class="ax" x1="80" y1="112" x2="320" y2="112"/>']
+        svg += _flutes(130, 330, 112, 30)
+        svg += ['<polygon class="m" points="96,112 130,97 130,127"/>',
+                '<circle class="wheel" cx="62" cy="70" r="42"/>',
+                '<circle class="wheel-hub" cx="62" cy="70" r="10"/>',
+                '<path class="motion" d="M30 34 A48 48 0 0 1 98 30" marker-end="url(#ar)"/>',
+                '<rect class="cam" x="150" y="160" width="46" height="26" rx="4"/>',
+                '<rect class="cam" x="138" y="166" width="14" height="14" rx="2"/>',
+                '<path class="view" d="M138 170 L100 118 M138 178 L100 122"/>',
+                '<text class="lbl" x="200" y="178">AOI</text>',
+                '</g>']
+    elif i == 1:  # A01: escova em cima, faca de ar pulsante embaixo, partículas saindo
+        svg += ['<line class="ax" x1="0" y1="104" x2="320" y2="104"/>']
+        svg += _flutes(0, 320, 104, 40, 22)
+        svg += ['<rect class="tool" x="90" y="22" width="140" height="18" rx="3"/>']
+        svg += [f'<line class="bristle" x1="{x}" y1="40" x2="{x + 4}" y2="82"/>' for x in range(98, 226, 8)]
+        svg += ['<path class="tool" d="M150 186 H210 L198 160 H162 Z"/>',
+                '<path class="air" d="M170 154 V134 M180 154 V128 M190 154 V134"/>']
+        svg += [f'<circle class="dust" cx="{x}" cy="{y}" r="{r}"/>' for x, y, r in
+                [(246, 62, 3), (262, 48, 2.5), (276, 70, 2), (238, 40, 2), (290, 52, 2.5), (254, 150, 2.5), (272, 166, 2), (288, 146, 2)]]
+    elif i == 2:  # MAX600: anel entrando na haste, colocação/remoção e tolerância
+        svg += ['<line class="ax" x1="0" y1="100" x2="320" y2="100"/>']
+        svg += _flutes(0, 40, 100, 16, 14)
+        svg += ['<polygon class="m" points="40,92 78,78 78,122 40,108"/>',
+                '<rect class="m" x="78" y="78" width="250" height="44"/>',
+                '<rect class="ring" x="150" y="68" width="30" height="64" rx="4"/>',
+                '<rect class="ghost" x="236" y="68" width="30" height="64" rx="4"/>',
+                '<path class="move" d="M190 100 H226" marker-start="url(#ar)" marker-end="url(#ar)"/>',
+                '<path class="dimx" d="M150 140 V170 M78 140 V170"/>',
+                '<path class="dimx" d="M80 162 H148" marker-start="url(#ar)" marker-end="url(#ar)"/>',
+                f'<text class="lbl" x="114" y="188" text-anchor="middle">{tol} mm</text>']
+    else:  # A02/A03: face da haste — cor antiga removida, cor nova aplicada
+        svg += ['<circle class="rim" cx="92" cy="96" r="54"/>',
+                '<circle class="old" cx="92" cy="96" r="44"/>',
+                '<path class="wash" d="M62 66 L122 126 M74 58 L130 114 M54 78 L110 134"/>',
+                '<path class="move" d="M160 96 H196" marker-end="url(#ar)"/>',
+                '<circle class="rim" cx="252" cy="96" r="54"/>',
+                '<circle class="mark" cx="252" cy="96" r="44"/>',
+                '<line class="ax" x1="20" y1="96" x2="300" y2="96"/>',
+                '<line class="ax" x1="92" y1="30" x2="92" y2="162"/>',
+                '<line class="ax" x1="252" y1="30" x2="252" y2="162"/>']
+    svg.insert(1, '<defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 1 L10 5 L0 9 z" fill="currentColor"/></marker></defs>')
+    svg.append('</svg>')
+    return "".join(svg).replace('id="ar"', f'id="ar{i}"').replace("url(#ar)", f"url(#ar{i})")
+
+
 def hero(t, root):
-    callouts = "".join(
-        f'<li><strong>{e(part)}</strong><span>{e(desc)}</span><a href="#{pid}">{e(model)}</a></li>'
-        for part, desc, model, pid in t["callouts"]
+    ops = "".join(
+        f'<li class="op-card"><div class="op-visual">{op_art(i, "±0,02" if t is TEXT["pt"] else "±0.02")}<span class="op-num" aria-hidden="true">{num}</span></div>'
+        f'<div class="op-body"><h3 class="op-title"><span class="op-machine">{e(machine)}</span> <span class="op-name">{e(name)}</span></h3>'
+        f'<p class="op-desc">{e(desc)}</p><p class="op-links">'
+        + "".join(f'<a href="#{pid}">{e(label)}</a>' for label, pid in links)
+        + '</p></div></li>'
+        for i, (num, machine, name, desc, links) in enumerate(t["ops"])
     )
     route = "".join(f'<li><span class="route-via" aria-hidden="true"></span>{e(c)}</li>' for c in t["route"])
     p0 = t["products"][0]
@@ -189,11 +287,13 @@ def hero(t, root):
     </figure>
   </div>
   <div class="wrap">
-    <figure class="drill">
-      <figcaption>{e(t['drill_caption'])}</figcaption>
-      {drill_svg(t)}
-      <ul class="callouts">{callouts}</ul>
-    </figure>
+    <div class="ops">
+      <div class="ops-head">
+        <h2 id="ops-title">{e(t['ops_title'])}</h2>
+        <p>{e(t['ops_lead'])}</p>
+      </div>
+      <ul class="ops-grid" aria-labelledby="ops-title">{ops}</ul>
+    </div>
   </div>
 </section>"""
 
