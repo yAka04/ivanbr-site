@@ -33,6 +33,7 @@ COMPANY = {
     "city": "Valinhos",
     "state": "SP",
     "zip": "13279-392",
+    "email": "contato@ivanpcb.com",
     "maps": "https://www.google.com/maps/search/?api=1&query=Rua+Bartolomeu+Bueno+da+Silva+88+Valinhos+SP+13279-392",
 }
 
@@ -42,7 +43,7 @@ LANGS = [
     {"code": "en", "html_lang": "en", "hreflang": "en", "label": "EN", "name": "English", "path": "en/"},
 ]
 # Versão em chinês desativada em 15/11/2026 a pedido do cliente. Os textos continuam em TEXT["zh"];
-# para reativar, volte a incluir esta linha em LANGS e apague o redirecionamento de /zh/ em build.py:
+# para reativar, volte a incluir esta linha em LANGS e o redirecionamento de /zh/ em build.py deixa de ser gerado sozinho:
 # {"code": "zh", "html_lang": "zh-CN", "hreflang": "zh-CN", "label": "中文", "name": "中文", "path": "zh/"},
 
 PRODUCT_IMAGES = {
@@ -329,6 +330,7 @@ PT = {
 
     "contact_title": "Fale com a nossa equipe",
     "contact_lead": "Conte o que você precisa na sua linha. O formulário abre o WhatsApp com a mensagem pronta, e você decide quando enviar.",
+    "email_label": "E-mail",
     "address_label": "Endereço",
     "country": "Brasil",
     "map_link": "Abrir no mapa",
@@ -628,6 +630,7 @@ EN = {
 
     "contact_title": "Talk to our team",
     "contact_lead": "Tell us what your line needs. The form opens WhatsApp with your message ready, and you decide when to send it.",
+    "email_label": "Email",
     "address_label": "Address",
     "country": "Brazil",
     "map_link": "Open in Maps",
@@ -920,6 +923,7 @@ ZH = {
 
     "contact_title": "联系我们",
     "contact_lead": "告诉我们您的产线需求。表单会打开 WhatsApp 并填好消息，由您决定何时发送。",
+    "email_label": "电子邮件",
     "address_label": "地址",
     "country": "巴西",
     "map_link": "在地图中打开",

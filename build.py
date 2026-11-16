@@ -570,6 +570,7 @@ def contact(t):
         <span class="contact-or">{e(t['cta_phone'])} <a href="tel:{c['phone_tel']}">{e(c['phone_display'])}</a></span>
       </div>
       <dl class="contact-list">
+        <div><dt>{e(t['email_label'])}</dt><dd><a href="mailto:{e(c['email'])}">{e(c['email'])}</a></dd></div>
         <div><dt>{e(t['address_label'])}</dt><dd><address>{address_html(t)}</address>
           <a class="map-link" href="{e(c['maps'])}" target="_blank" rel="noopener">{e(t['map_link'])}</a></dd></div>
       </dl>
@@ -654,6 +655,7 @@ def head(t, lang, root):
         "taxID": c["cnpj"],
         "description": t["footer_group"],
         "telephone": c["phone_tel"],
+        "email": c["email"],
         "address": {
             "@type": "PostalAddress",
             "streetAddress": f"{c['street']}, {c['unit']}, {c['condo']}",
@@ -777,9 +779,9 @@ def main():
     (OUT / "404.html").write_text(page_404(), encoding="utf-8")
     # /pt/ leva para a versão em português (que fica na raiz), mantendo a seção (#...).
     write_redirect("pt", "../", "pt-BR")
-    # A versão em chinês foi desativada: quem abrir um link antigo de /zh/ vai para a versão em inglês.
+    # A versão em chinês foi desativada: quem abrir um link antigo de /zh/ vai para a versão em português.
     if not any(l["code"] == "zh" for l in LANGS):
-        write_redirect("zh", "../en/", "en")
+        write_redirect("zh", "../", "pt-BR")
     if CUSTOM_DOMAIN:
         (OUT / "CNAME").write_text(CUSTOM_DOMAIN + "\n", encoding="utf-8")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
